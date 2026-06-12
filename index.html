@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Y.VAULT - نظام محمي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      background: #0A0A0A;
+      font-family: 'Inter', sans-serif;
+      color: #E8E8E8;
+      direction: rtl;
+      overflow-x: hidden;
+    }
+
+    .pw {
+      background: #0A0A0A;
+      font-family: 'Inter', sans-serif;
+      color: #E8E8E8;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      background: #0A0A0A;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .skull {
+      font-size: 11px;
+      font-family: 'Share Tech Mono', monospace;
+      color: #1a1a1a;
+      line-height: 1.2;
+      text-align: center;
+      margin-bottom: 28px;
+      letter-spacing: 2px;
+      white-space: pre;
+    }
+
+    .lock-icon {
+      color: #C8102E;
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .lock-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: #fff;
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+    }
+
+    .lock-sub {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 32px;
+    }
+
+    .warn-bar {
+      background: #110000;
+      border: 1px solid #2a0000;
+      border-left: 3px solid #C8102E;
+      padding: 8px 16px;
+      font-size: 11px;
+      font-family: 'Share Tech Mono', monospace;
+      color: #C8102E;
+      letter-spacing: 0.08em;
+      margin-bottom: 28px;
+      width: 100%;
+      max-width: 340px;
+      border-radius: 4px;
+    }
+
+    .input-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      margin-bottom: 12px;
+    }
+
+    .pw-input {
+      width: 100%;
+      background: #0f0f0f;
+      border: 1px solid #2a0000;
+      border-bottom: 2px solid #C8102E;
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 15px;
+      padding: 12px 44px 12px 16px;
+      letter-spacing: 0.2em;
+      outline: none;
+      transition: all 0.3s;
+      border-radius: 6px;
+    }
+
+    .pw-input:focus {
+      border-color: #C8102E;
+      background: #110000;
+      box-shadow: 0 0 20px rgba(200, 16, 46, 0.3);
+    }
+
+    .pw-input::placeholder {
+      color: #444;
+      letter-spacing: 0.1em;
+    }
+
+    .eye-btn {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      transition: color 0.15s;
+    }
+
+    .eye-btn:hover {
+      color: #C8102E;
+    }
+
+    .enter-btn {
+      width: 100%;
+      max-width: 340px;
+      background: linear-gradient(135deg, #C8102E 0%, #a00d24 100%);
+      border: none;
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .enter-btn:hover {
+      background: linear-gradient(135deg, #a00d24 0%, #8a0a1d 100%);
+      box-shadow: 0 0 20px rgba(200, 16, 46, 0.4);
+    }
+
+    .set-btn {
+      background: transparent;
+      border: 1px solid #444;
+      color: #999;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: block;
+      margin: 0 auto;
+      border-radius: 4px;
+    }
+
+    .set-btn:hover {
+      border-color: #C8102E;
+      color: #C8102E;
+    }
+
+    .err {
+      color: #C8102E;
+      font-size: 11px;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+      text-align: center;
+      min-height: 16px;
+    }
+
+    .attempts {
+      color: #444;
+      font-size: 10px;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 0.1em;
+      margin-top: 16px;
+    }
+
+    .terminal-line {
+      font-size: 10px;
+      font-family: 'Share Tech Mono', monospace;
+      color: #333;
+      letter-spacing: 0.06em;
+      margin-top: 24px;
+      text-align: right;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .terminal-line span {
+      color: #C8102E;
+      animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .dashboard {
+      display: none;
+      background: #0A0A0A;
+      width: 100%;
+      min-height: 100vh;
+      overflow-y: auto;
+      padding-bottom: 40px;
+    }
+
+    .top-bar {
+      border-bottom: 1px solid #1a1a1a;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: #0A0A0A;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #fff;
+    }
+
+    .logo span {
+      color: #C8102E;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: #C8102E;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .status-txt {
+      font-size: 9px;
+      font-family: 'Share Tech Mono', monospace;
+      color: #777;
+      letter-spacing: 0.08em;
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid #333;
+      color: #777;
+      font-size: 9px;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 0.1em;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+      border-radius: 4px;
+    }
+
+    .logout-btn:hover {
+      border-color: #C8102E;
+      color: #C8102E;
+    }
+
+    .hero {
+      padding: 32px 20px 24px;
+      border-bottom: 1px solid #111;
+    }
+
+    .hero-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #C8102E;
+      margin-bottom: 8px;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .hero-sub {
+      font-size: 12px;
+      color: #777;
+      letter-spacing: 0.05em;
+      font-family: 'Share Tech Mono', monospace;
+      margin-bottom: 16px;
+    }
+
+    .hero-rule {
+      width: 30px;
+      height: 2px;
+      background: #C8102E;
+      margin: 14px 0;
+    }
+
+    .change-pw-btn {
+      background: transparent;
+      border: 1px solid #333;
+      color: #777;
+      font-size: 9px;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 6px;
+      border-radius: 4px;
+    }
+
+    .change-pw-btn:hover {
+      border-color: #C8102E;
+      color: #C8102E;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: #111;
+      margin: 0;
+    }
+
+    .stat-box {
+      background: #0A0A0A;
+      padding: 16px 20px;
+      text-align: center;
+      border: 1px solid #111;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .stat-num span {
+      color: #C8102E;
+    }
+
+    .stat-lbl {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #666;
+      margin-top: 4px;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .content {
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .section {
+      background: #0f0f0f;
+      border: 1px solid #1a1a1a;
+      border-radius: 8px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .sec-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #C8102E;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Share Tech Mono', monospace;
+      font-weight: 600;
+    }
+
+    .sec-label::before {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #1a1a1a;
+    }
+
+    .editable-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #1a1a1a;
+      font-size: 13px;
+      gap: 12px;
+    }
+
+    .editable-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .info-key {
+      color: #A0A0A0;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: 'Share Tech Mono', monospace;
+      min-width: 100px;
+      font-weight: 500;
+    }
+
+    .info-val-display {
+      color: #DDD;
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 4px;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+
+    .info-val-display:hover {
+      background: #1a1a1a;
+      color: #C8102E;
+    }
+
+    .quick-add {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    .quick-input {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: #DDD;
+      font-family: 'Inter', sans-serif;
+      padding: 10px 12px;
+      font-size: 13px;
+      outline: none;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .quick-input:focus {
+      border-color: #C8102E;
+      background: #1a0a0a;
+      box-shadow: 0 0 15px rgba(200, 16, 46, 0.2);
+    }
+
+    .quick-input::placeholder {
+      color: #666;
+    }
+
+    .quick-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .quick-submit {
+      flex: 1;
+      background: linear-gradient(135deg, #C8102E 0%, #a00d24 100%);
+      color: #fff;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 11px;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .quick-submit:hover {
+      box-shadow: 0 0 15px rgba(200, 16, 46, 0.4);
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    .file-item:last-of-type {
+      border-bottom: none;
+    }
+
+    .file-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #C8102E;
+      flex-shrink: 0;
+      border-radius: 6px;
+      background: #1a1a1a;
+    }
+
+    .file-info {
+      flex: 1;
+    }
+
+    .file-name {
+      font-size: 13px;
+      color: #DDD;
+      transition: color 0.15s;
+    }
+
+    .file-meta {
+      font-size: 11px;
+      color: #777;
+      margin-top: 3px;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .file-delete {
+      background: transparent;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 20px;
+      transition: color 0.15s;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+
+    .file-delete:hover {
+      color: #C8102E;
+    }
+
+    .note-card {
+      background: #1a1a1a;
+      border-right: 3px solid #C8102E;
+      padding: 14px;
+      margin-bottom: 10px;
+      position: relative;
+      transition: all 0.15s;
+      border-radius: 6px;
+    }
+
+    .note-card:hover {
+      background: #222;
+    }
+
+    .note-title {
+      font-size: 13px;
+      color: #DDD;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .note-preview {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.5;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .note-date {
+      font-size: 10px;
+      color: #666;
+      margin-top: 8px;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .note-delete {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      background: transparent;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 18px;
+      transition: color 0.15s;
+    }
+
+    .note-delete:hover {
+      color: #C8102E;
+    }
+
+    .add-note-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #C8102E 0%, #a00d24 100%);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      border-radius: 6px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .add-note-btn:hover {
+      box-shadow: 0 0 20px rgba(200, 16, 46, 0.4);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: #0f0f0f;
+      border: 1px solid #2a2a2a;
+      border-right: 2px solid #C8102E;
+      padding: 28px;
+      max-width: 400px;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 0 40px rgba(200, 16, 46, 0.2);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: #fff;
+      margin-bottom: 16px;
+      letter-spacing: 0.08em;
+    }
+
+    .modal-input, .modal-textarea {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: #DDD;
+      font-family: 'Inter', sans-serif;
+      padding: 12px;
+      margin-bottom: 12px;
+      outline: none;
+      font-size: 13px;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .modal-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .modal-input:focus, .modal-textarea:focus {
+      border-color: #C8102E;
+      background: #1a0a0a;
+      box-shadow: 0 0 15px rgba(200, 16, 46, 0.2);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .modal-btn-save {
+      background: linear-gradient(135deg, #C8102E 0%, #a00d24 100%);
+      color: #fff;
+    }
+
+    .modal-btn-save:hover {
+      box-shadow: 0 0 15px rgba(200, 16, 46, 0.4);
+    }
+
+    .modal-btn-cancel {
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #999;
+    }
+
+    .modal-btn-cancel:hover {
+      border-color: #C8102E;
+      color: #C8102E;
+    }
+
+    .setup-overlay {
+      background: #0A0A0A;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .setup-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .setup-sub {
+      font-size: 11px;
+      font-family: 'Share Tech Mono', monospace;
+      color: #777;
+      letter-spacing: 0.12em;
+      margin-bottom: 28px;
+    }
+
+    .setup-input {
+      width: 100%;
+      max-width: 320px;
+      background: #0f0f0f;
+      border: 1px solid #2a2a2a;
+      border-bottom: 2px solid #C8102E;
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 14px;
+      padding: 11px 14px;
+      letter-spacing: 0.2em;
+      outline: none;
+      margin-bottom: 10px;
+      display: block;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .setup-input:focus {
+      box-shadow: 0 0 15px rgba(200, 16, 46, 0.2);
+    }
+
+    .confirm-input {
+      width: 100%;
+      max-width: 320px;
+      background: #0f0f0f;
+      border: 1px solid #2a2a2a;
+      border-bottom: 2px solid #666;
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 14px;
+      padding: 11px 14px;
+      letter-spacing: 0.2em;
+      outline: none;
+      margin-bottom: 14px;
+      display: block;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .confirm-input:focus {
+      border-bottom-color: #C8102E;
+      box-shadow: 0 0 15px rgba(200, 16, 46, 0.2);
+    }
+
+    .setup-save {
+      width: 100%;
+      max-width: 320px;
+      background: linear-gradient(135deg, #C8102E 0%, #a00d24 100%);
+      border: none;
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .setup-save:hover {
+      box-shadow: 0 0 20px rgba(200, 16, 46, 0.4);
+    }
+
+    .setup-err {
+      color: #C8102E;
+      font-size: 11px;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 0.08em;
+      min-height: 16px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .setup-tag {
+      font-size: 10px;
+      font-family: 'Share Tech Mono', monospace;
+      color: #C8102E;
+      letter-spacing: 0.2em;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .stat-row {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .stat-box {
+        padding: 14px 16px;
+      }
+
+      .stat-num {
+        font-size: 20px;
+      }
+
+      .stat-lbl {
+        font-size: 8px;
+      }
+
+      .hero-name {
+        font-size: 28px;
+      }
+
+      .content {
+        padding: 18px 16px;
+        gap: 20px;
+      }
+
+      .section {
+        padding: 16px;
+      }
+
+      .modal-content {
+        padding: 20px;
+      }
+
+      .editable-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="pw" id="app">
+
+  <div id="setup-screen" class="setup-overlay">
+    <div class="setup-tag">// إعداد كلمة السر //</div>
+    <div class="setup-title">تحديد كلمة الوصول</div>
+    <div class="setup-sub">لن تُعرض لأحد سواك</div>
+    <input class="setup-input" id="new-pw" type="password" placeholder="كلمة السر الجديدة...">
+    <input class="confirm-input" id="confirm-pw" type="password" placeholder="تأكيد كلمة السر...">
+    <div class="setup-err" id="setup-err"></div>
+    <button class="setup-save" onclick="savePassword()">حفظ وتفعيل الحماية</button>
+  </div>
+
+  <div id="lock-screen" class="screen">
+    <div class="skull">▓▓▓░░░▓▓▓
+░▓░░░░░▓░
+▓░▓░░░▓░▓
+░░░░░░░░░
+░▓░░▓░░▓░</div>
+    <div class="lock-icon">🔐</div>
+    <div class="lock-title">Y.VAULT</div>
+    <div class="lock-sub">وصول محظور — هوية مطلوبة</div>
+    <div class="warn-bar">! تحذير: هذا النظام مراقب. كل محاولة دخول مسجّلة.</div>
+    <div class="input-wrap">
+      <input class="pw-input" id="pw-field" type="password" placeholder="أدخل رمز الوصول..." onkeydown="if(event.key==='Enter')tryLogin()">
+      <button class="eye-btn" onclick="toggleEye()">👁️</button>
+    </div>
+    <div class="err" id="err-msg"></div>
+    <button class="enter-btn" onclick="tryLogin()">➜ دخول النظام</button>
+    <button class="set-btn" onclick="showSetup()">تعيين كلمة سر جديدة</button>
+    <div class="terminal-line" id="terminal-line">root@vault:~$ <span>_</span></div>
+    <div class="attempts" id="attempts-txt"></div>
+  </div>
+
+  <div id="dashboard" class="dashboard">
+    <div class="top-bar">
+      <div class="logo">Y<span>.</span>VAULT</div>
+      <div class="top-right">
+        <span class="status-txt"><span class="status-dot"></span>متصل</span>
+        <button class="logout-btn" onclick="logout()">🔒 قفل</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-label">// وصول ممنوح //</div>
+      <div class="hero-name">ياسر</div>
+      <div class="hero-sub">مساحتك المحمية — لا أحد يصل سواك</div>
+      <div class="hero-rule"></div>
+      <button class="change-pw-btn" onclick="showSetup()">🔑 تغيير كلمة السر</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-num" id="stat-info">0<span>0</span></div><div class="stat-lbl">معلومات</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-files">0<span>0</span></div><div class="stat-lbl">ملفات</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-notes">0<span>0</span></div><div class="stat-lbl">ملاحظات</div></div>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <div class="sec-label">معلوماتي</div>
+        <div id="info-container"></div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">ملفاتي</div>
+        <div id="files-container"></div>
+      </div>
+
+      <div class="section">
+        <div class="sec-label">ما تعلمته</div>
+        <div id="notes-container"></div>
+        <button class="add-note-btn" onclick="openNoteModal()">+ إضافة ملاحظة جديدة</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="noteModal" class="modal-overlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-title">إضافة ملاحظة جديدة</div>
+      <input type="text" class="modal-input" id="noteTitle" placeholder="عنوان الملاحظة...">
+      <textarea class="modal-textarea" id="noteContent" placeholder="محتوى الملاحظة..."></textarea>
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-save" onclick="addNote()">حفظ الملاحظة</button>
+        <button class="modal-btn modal-btn-cancel" onclick="closeModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var STORAGE_KEY = 'yvault_pw_v1';
+  var DATA_KEY = 'yvault_data_v1';
+  var failCount = 0;
+  var eyeVisible = false;
+
+  var defaultData = {
+    info: [
+      { key: 'الاسم', value: 'ياسر' },
+      { key: 'المدينة', value: 'جدة' },
+      { key: 'الاهتمامات', value: 'تقنية، تصميم' }
+    ],
+    files: [
+      { name: 'ملف 1.pdf', desc: '2025.06.01' },
+      { name: 'ملاحظات.docx', desc: '2025.05.14' },
+      { name: 'صورة.png', desc: '2025.04.20' }
+    ],
+    notes: [
+      { title: 'موضوع تعلمته', content: 'أضف هنا ملخص لشيء تعلمته أو قرأته...', date: '2025.06.01' },
+      { title: 'ملاحظة ثانية', content: 'فكرة أو درس لا تريد أن تنساه', date: '2025.05.10' }
+    ]
+  };
+
+  function getData() {
+    try {
+      var data = localStorage.getItem(DATA_KEY);
+      return data ? JSON.parse(data) : defaultData;
+    } catch (e) {
+      return defaultData;
+    }
+  }
+
+  function saveData(data) {
+    try {
+      localStorage.setItem(DATA_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.error('خطأ:', e);
+    }
+  }
+
+  function getStoredPw() {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function storePw(p) {
+    try {
+      localStorage.setItem(STORAGE_KEY, p);
+    } catch (e) { }
+  }
+
+  function init() {
+    var stored = getStoredPw();
+    if (!stored) {
+      document.getElementById('setup-screen').style.display = 'flex';
+      document.getElementById('lock-screen').style.display = 'none';
+    } else {
+      document.getElementById('setup-screen').style.display = 'none';
+      document.getElementById('lock-screen').style.display = 'flex';
+      document.getElementById('pw-field').focus();
+    }
+  }
+
+  function renderDashboard() {
+    var data = getData();
+    
+    document.getElementById('stat-info').innerHTML = '0<span>' + String(data.info.length).padStart(1, '0') + '</span>';
+    document.getElementById('stat-files').innerHTML = '0<span>' + String(data.files.length).padStart(1, '0') + '</span>';
+    document.getElementById('stat-notes').innerHTML = '0<span>' + String(data.notes.length).padStart(1, '0') + '</span>';
+
+    // معلومات
+    var infoHtml = '';
+    data.info.forEach((item, idx) => {
+      infoHtml += '<div class="editable-row">' +
+        '<span class="info-key">' + item.key + '</span>' +
+        '<span class="info-val-display" onclick="startEdit(' + idx + ',' + JSON.stringify(item).replace(/"/g, '&quot;') + ')">' + item.value + '</span>' +
+        '</div>';
+    });
+    infoHtml += '<div class="quick-add">' +
+      '<input type="text" class="quick-input" id="new-info-key" placeholder="اسم المعلومة">' +
+      '<input type="text" class="quick-input" id="new-info-val" placeholder="القيمة">' +
+      '<div class="quick-buttons"><button class="quick-submit" onclick="addInfo()">إضافة معلومة</button></div>' +
+      '</div>';
+    document.getElementById('info-container').innerHTML = infoHtml;
+
+    // ملفات
+    var filesHtml = '';
+    data.files.forEach((file, idx) => {
+      filesHtml += '<div class="file-item">' +
+        '<div class="file-icon">📄</div>' +
+        '<div class="file-info"><div class="file-name">' + file.name + '</div><div class="file-meta">' + file.desc + '</div></div>' +
+        '<button class="file-delete" onclick="deleteFile(' + idx + ')">×</button>' +
+        '</div>';
+    });
+    filesHtml += '<div class="quick-add">' +
+      '<input type="text" class="quick-input" id="new-file-name" placeholder="اسم الملف">' +
+      '<input type="text" class="quick-input" id="new-file-desc" placeholder="وصف أو تاريخ">' +
+      '<div class="quick-buttons"><button class="quick-submit" onclick="addFile()">إضافة ملف</button></div>' +
+      '</div>';
+    document.getElementById('files-container').innerHTML = filesHtml;
+
+    // ملاحظات
+    var notesHtml = '';
+    data.notes.forEach((note, idx) => {
+      notesHtml += '<div class="note-card">' +
+        '<button class="note-delete" onclick="deleteNote(' + idx + ')">×</button>' +
+        '<div class="note-title">' + note.title + '</div>' +
+        '<div class="note-preview">' + note.content + '</div>' +
+        '<div class="note-date">' + note.date + '</div>' +
+        '</div>';
+    });
+    document.getElementById('notes-container').innerHTML = notesHtml;
+  }
+
+  function startEdit(idx, item) {
+    var val = prompt('عدّل المعلومة:', item.value);
+    if (val !== null) {
+      var data = getData();
+      data.info[idx].value = val;
+      saveData(data);
+      renderDashboard();
+    }
+  }
+
+  function addInfo() {
+    var key = document.getElementById('new-info-key').value;
+    var val = document.getElementById('new-info-val').value;
+    if (!key || !val) { alert('أدخل القيمة والاسم'); return; }
+    
+    var data = getData();
+    data.info.push({ key: key, value: val });
+    saveData(data);
+    renderDashboard();
+  }
+
+  function addFile() {
+    var name = document.getElementById('new-file-name').value;
+    var desc = document.getElementById('new-file-desc').value;
+    if (!name) { alert('أدخل اسم الملف'); return; }
+    
+    var data = getData();
+    var today = new Date();
+    var dateStr = today.getFullYear() + '.' + String(today.getMonth() + 1).padStart(2, '0') + '.' + String(today.getDate()).padStart(2, '0');
+    data.files.push({ name: name, desc: desc || dateStr });
+    saveData(data);
+    renderDashboard();
+  }
+
+  function addNote() {
+    var title = document.getElementById('noteTitle').value;
+    var content = document.getElementById('noteContent').value;
+    if (!title || !content) { alert('أدخل العنوان والمحتوى'); return; }
+    
+    var data = getData();
+    var today = new Date();
+    var dateStr = today.getFullYear() + '.' + String(today.getMonth() + 1).padStart(2, '0') + '.' + String(today.getDate()).padStart(2, '0');
+    data.notes.push({ title: title, content: content, date: dateStr });
+    saveData(data);
+    closeModal();
+    renderDashboard();
+  }
+
+  function deleteFile(idx) {
+    if (!confirm('حذف الملف؟')) return;
+    var data = getData();
+    data.files.splice(idx, 1);
+    saveData(data);
+    renderDashboard();
+  }
+
+  function deleteNote(idx) {
+    if (!confirm('حذف الملاحظة؟')) return;
+    var data = getData();
+    data.notes.splice(idx, 1);
+    saveData(data);
+    renderDashboard();
+  }
+
+  function openNoteModal() {
+    document.getElementById('noteModal').classList.add('active');
+    document.getElementById('noteTitle').focus();
+  }
+
+  function closeModal() {
+    document.getElementById('noteModal').classList.remove('active');
+    document.getElementById('noteTitle').value = '';
+    document.getElementById('noteContent').value = '';
+  }
+
+  function showSetup() {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('setup-screen').style.display = 'flex';
+    document.getElementById('new-pw').value = '';
+    document.getElementById('confirm-pw').value = '';
+    document.getElementById('setup-err').textContent = '';
+    document.getElementById('new-pw').focus();
+  }
+
+  function savePassword() {
+    var p1 = document.getElementById('new-pw').value;
+    var p2 = document.getElementById('confirm-pw').value;
+    
+    if (p1.length < 4) {
+      document.getElementById('setup-err').textContent = '! كلمة السر قصيرة — 4 أحرف على الأقل';
+      return;
+    }
+    
+    if (p1 !== p2) {
+      document.getElementById('setup-err').textContent = '! كلمة السر غير متطابقة';
+      return;
+    }
+    
+    storePw(p1);
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('lock-screen').style.display = 'flex';
+    document.getElementById('pw-field').value = '';
+    document.getElementById('err-msg').textContent = '// كلمة السر حُفظت — ادخل الآن //';
+    document.getElementById('pw-field').focus();
+  }
+
+  function tryLogin() {
+    var pw = document.getElementById('pw-field').value;
+    var stored = getStoredPw();
+    
+    if (!stored) {
+      showSetup();
+      return;
+    }
+    
+    if (pw === stored) {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      failCount = 0;
+      renderDashboard();
+    } else {
+      failCount++;
+      var msgs = ['// رمز خاطئ //', '! تحذير', '!! محاولات متعددة'];
+      document.getElementById('err-msg').textContent = msgs[Math.min(failCount - 1, 2)];
+      document.getElementById('pw-field').value = '';
+      if (failCount > 1) {
+        document.getElementById('attempts-txt').textContent = 'محاولات: ' + failCount;
+      }
+    }
+  }
+
+  function logout() {
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('lock-screen').style.display = 'flex';
+    document.getElementById('pw-field').value = '';
+    document.getElementById('err-msg').textContent = '';
+    document.getElementById('attempts-txt').textContent = '';
+  }
+
+  function toggleEye() {
+    var f = document.getElementById('pw-field');
+    var btn = document.querySelector('.eye-btn');
+    eyeVisible = !eyeVisible;
+    f.type = eyeVisible ? 'text' : 'password';
+    btn.textContent = eyeVisible ? '🚫' : '👁️';
+  }
+
+  init();
+</script>
+
+</body>
+</html>
